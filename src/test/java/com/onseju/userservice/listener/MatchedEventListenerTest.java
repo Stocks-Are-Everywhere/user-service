@@ -3,6 +3,8 @@ package com.onseju.userservice.listener;
 import com.onseju.userservice.account.domain.Account;
 import com.onseju.userservice.account.service.AccountRepository;
 import com.onseju.userservice.account.service.AccountService;
+import com.onseju.userservice.listener.matched.MatchedEvent;
+import com.onseju.userservice.listener.matched.MatchedEventListener;
 import com.onseju.userservice.member.domain.Member;
 import com.onseju.userservice.member.domain.Role;
 import com.onseju.userservice.member.service.MemberRepository;
@@ -80,12 +82,12 @@ class MatchedEventListenerTest {
         );
 
         // when
-        CompletableFuture.runAsync(() -> matchedEventListener.createTradeHistoryEvent(matchedEvent))
+        CompletableFuture.runAsync(() -> matchedEventListener.handleMatchedEvent(matchedEvent))
                 .orTimeout(2, TimeUnit.SECONDS) // 비동기 실행을 기다림
                 .join();
 
         // then
-        Assertions.assertThatCode(() -> matchedEventListener.createTradeHistoryEvent(matchedEvent))
+        Assertions.assertThatCode(() -> matchedEventListener.handleMatchedEvent(matchedEvent))
                 .doesNotThrowAnyException();
     }
 
@@ -105,7 +107,7 @@ class MatchedEventListenerTest {
         );
 
         // when
-        matchedEventListener.createTradeHistoryEvent(matchedEvent);
+        matchedEventListener.handleMatchedEvent(matchedEvent);
 
         // then
         Account account = accountRepository.getById(1L);

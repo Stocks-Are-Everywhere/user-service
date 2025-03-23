@@ -61,7 +61,7 @@ public class Account extends BaseEntity {
 	public void processOrder(final Type type, final BigDecimal price, final BigDecimal quantity) {
 		final BigDecimal totalPrice = price.multiply(quantity);
 
-		if (type.equals(Type.BUY)) {
+		if (type.isBuy()) {
 			processBuyOrder(totalPrice);
 		} else {
 			processSellOrder(totalPrice);
@@ -83,9 +83,5 @@ public class Account extends BaseEntity {
 		if (availableBalance.compareTo(totalPrice) < 0) {
 			throw new InsufficientBalanceException("주문금액이 예수금잔액을 초과합니다.");
 		}
-	}
-
-	public void deposit(final BigDecimal price) {
-		this.balance = this.balance.add(price);
 	}
 }
