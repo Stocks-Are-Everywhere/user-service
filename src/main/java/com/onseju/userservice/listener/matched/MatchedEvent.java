@@ -1,4 +1,4 @@
-package com.onseju.userservice.listener;
+package com.onseju.userservice.listener.matched;
 
 import java.math.BigDecimal;
 
