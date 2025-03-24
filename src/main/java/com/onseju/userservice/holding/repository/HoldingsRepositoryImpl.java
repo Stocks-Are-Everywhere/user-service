@@ -2,6 +2,7 @@ package com.onseju.userservice.holding.repository;
 
 import com.onseju.userservice.holding.domain.Holdings;
 import com.onseju.userservice.holding.service.HoldingsRepository;
+import com.onseju.userservice.holding.exception.HoldingsNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -19,7 +20,7 @@ public class HoldingsRepositoryImpl implements HoldingsRepository {
     }
 
     @Override
-    public Holdings getByAccountIdAndCompanyCode(final Long accountId, final String companyCode) {
+    public Holdings getOrDefaultByAccountIdAndCompanyCode(final Long accountId, final String companyCode) {
         return holdingsJpaRepository.findByAccountIdAndCompanyCode(accountId, companyCode)
                 .orElse(
                         Holdings.builder()
@@ -31,5 +32,11 @@ public class HoldingsRepositoryImpl implements HoldingsRepository {
                                 .totalPurchasePrice(BigDecimal.ZERO)
                                 .build()
                 );
+    }
+
+    @Override
+    public Holdings getByAccountIdAndCompanyCode(final Long accountId, final String companyCode) {
+        return holdingsJpaRepository.findByAccountIdAndCompanyCode(accountId, companyCode)
+                .orElseThrow(HoldingsNotFoundException::new);
     }
 }

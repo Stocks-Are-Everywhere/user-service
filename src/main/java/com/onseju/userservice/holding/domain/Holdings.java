@@ -2,6 +2,8 @@ package com.onseju.userservice.holding.domain;
 
 import com.onseju.userservice.account.domain.Type;
 import com.onseju.userservice.global.entity.BaseEntity;
+import com.onseju.userservice.holding.exception.HoldingsNotFoundException;
+import com.onseju.userservice.holding.exception.InsufficientHoldingsException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -56,6 +58,21 @@ public class Holdings extends BaseEntity {
 	@Column(nullable = false)
 	private Long accountId;
 
+	public void validateEnoughHoldings(final BigDecimal checkQuantity) {
+		if (getAvailableQuantity().compareTo(checkQuantity) < 0) {
+			throw new InsufficientHoldingsException();
+		}
+	}
+
+	public void validateExistHoldings() {
+		if (this.quantity.equals(BigDecimal.ZERO)) {
+			throw new HoldingsNotFoundException();
+		}
+	}
+
+	private BigDecimal getAvailableQuantity() {
+		return this.quantity.subtract(this.reservedQuantity);
+	}
 
 	// 예약 주문 처리
 	public void reserveOrder(final BigDecimal reservedQuantity) {

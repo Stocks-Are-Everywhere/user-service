@@ -17,4 +17,10 @@ public class AccountRepositoryImpl implements AccountRepository {
 		return accountJpaRepository.findById(id)
 				.orElseThrow(AccountNotFoundException::new);
 	}
+
+	@Override
+	public Account getByMemberId(Long memberId) {
+		return accountJpaRepository.findByMemberId(memberId)
+				.orElseThrow(AccountNotFoundException::new);
+	}
 }

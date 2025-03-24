@@ -49,12 +49,19 @@ public class Account extends BaseEntity {
 		this.reservedBalance = BigDecimal.ZERO;
 	}
 
+	public void validateDepositBalance(final BigDecimal totalPrice) {
+		final BigDecimal availableBalance = getAvailableBalance();
+		if (availableBalance.compareTo(totalPrice) < 0) {
+			throw new InsufficientBalanceException();
+		}
+	}
+
 	// 예약 주문 처리
 	public void processReservedOrder(final BigDecimal amount) {
 		this.reservedBalance = this.reservedBalance.add(amount);
 	}
 
-	public BigDecimal getAvailableBalance() {
+	private BigDecimal getAvailableBalance() {
 		return this.balance.subtract(this.reservedBalance);
 	}
 
@@ -76,12 +83,5 @@ public class Account extends BaseEntity {
 
 	private void processSellOrder(final BigDecimal totalPrice) {
 		this.balance = this.balance.add(totalPrice);
-	}
-
-	public void validateDepositBalance(final BigDecimal totalPrice) {
-		final BigDecimal availableBalance = getAvailableBalance();
-		if (availableBalance.compareTo(totalPrice) < 0) {
-			throw new InsufficientBalanceException("주문금액이 예수금잔액을 초과합니다.");
-		}
 	}
 }

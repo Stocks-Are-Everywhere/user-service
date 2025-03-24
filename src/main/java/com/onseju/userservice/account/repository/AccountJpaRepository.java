@@ -11,4 +11,7 @@ public interface AccountJpaRepository extends JpaRepository<Account, Long> {
 
 	@Lock(LockModeType.PESSIMISTIC_READ)
 	Optional<Account> findById(Long id);
+
+	@Lock(LockModeType.PESSIMISTIC_READ)
+	Optional<Account> findByMemberId(Long memberId);
 }

@@ -2,7 +2,7 @@ package com.onseju.userservice.account.service;
 
 import com.onseju.userservice.account.domain.Account;
 import com.onseju.userservice.account.service.dto.AccountAfterTradeParams;
-import com.onseju.userservice.account.service.dto.ReserveAccountDto;
+import com.onseju.userservice.order.controller.request.OrderValidationRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -26,10 +26,12 @@ public class AccountService {
 	}
 
 	@Transactional
-	public void reserve(final ReserveAccountDto dto) {
-		if (dto.type().isBuy()) {
-			Account account = accountRepository.getById(dto.accountId());
-			account.processReservedOrder(dto.price().multiply(dto.totalQuantity()));
+	public Long checkAccountAndReserve(final OrderValidationRequest request) {
+		Account account = accountRepository.getByMemberId(request.memberId());
+		if (request.type().isBuy()) {
+			account.validateDepositBalance(request.price().multiply(request.quantity()));
+			account.processReservedOrder(request.price().multiply(request.quantity()));
 		}
+		return account.getId();
 	}
 }

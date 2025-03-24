@@ -1,18 +1,20 @@
-package com.onseju.userservice.holding.fake;
+package com.onseju.userservice.fake;
 
 import com.onseju.userservice.holding.domain.Holdings;
+import com.onseju.userservice.holding.exception.HoldingsNotFoundException;
 import com.onseju.userservice.holding.service.HoldingsRepository;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.concurrent.ConcurrentSkipListSet;
 
 public class FakeHoldingsRepository implements HoldingsRepository {
 
-    private final ConcurrentSkipListSet<Holdings> elements = new ConcurrentSkipListSet<>(Comparator.comparing(Holdings::getAccountId));
+    private final ConcurrentSkipListSet<Holdings> elements = new ConcurrentSkipListSet<>(Comparator.comparing(Holdings::getId));
 
     @Override
-    public Holdings getByAccountIdAndCompanyCode(Long accountId, String companyCode) {
+    public Holdings getOrDefaultByAccountIdAndCompanyCode(Long accountId, String companyCode) {
         return elements.stream()
                 .filter(value ->
                         value.getCompanyCode().equals(companyCode) &&
@@ -31,6 +33,17 @@ public class FakeHoldingsRepository implements HoldingsRepository {
                 );
     }
 
+    @Override
+    public Holdings getByAccountIdAndCompanyCode(Long accountId, String companyCode) {
+        return elements.stream()
+                .filter(value ->
+                        value.getCompanyCode().equals(companyCode) &&
+                        value.getAccountId().equals(accountId))
+                .findAny()
+                .orElseThrow(HoldingsNotFoundException::new);
+    }
+
+    @Override
     public Holdings save(Holdings holdings) {
         if (hasElement(holdings)) {
             elements.stream()
@@ -47,6 +60,8 @@ public class FakeHoldingsRepository implements HoldingsRepository {
                 .averagePrice(holdings.getAveragePrice())
                 .totalPurchasePrice(holdings.getTotalPurchasePrice())
                 .accountId(holdings.getAccountId())
+                .createdDateTime(LocalDateTime.now())
+                .updatedDateTime(LocalDateTime.now())
                 .build();
         elements.add(saved);
         return saved;
