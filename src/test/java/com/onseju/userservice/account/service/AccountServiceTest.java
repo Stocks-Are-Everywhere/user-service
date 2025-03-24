@@ -44,7 +44,7 @@ class AccountServiceTest {
         void updateAccountAfterBuyTradeSuccess() {
             // given
             Long accountId = 1L;
-            AccountAfterTradeParams params = new AccountAfterTradeParams(1L, Type.BUY, BigDecimal.ONE, BigDecimal.ONE);
+            AccountAfterTradeParams params = new AccountAfterTradeParams(1L, Type.LIMIT_BUY, BigDecimal.ONE, BigDecimal.ONE);
 
             // when
             accountService.updateAccountAfterTrade(params);
@@ -60,7 +60,7 @@ class AccountServiceTest {
         void updateAccountAfterSellTradeSuccess() {
             // given
             Long accountId = 1L;
-            AccountAfterTradeParams params = new AccountAfterTradeParams(1L, Type.SELL, BigDecimal.ONE, BigDecimal.ONE);
+            AccountAfterTradeParams params = new AccountAfterTradeParams(1L, Type.LIMIT_SELL, BigDecimal.ONE, BigDecimal.ONE);
 
             // when
             accountService.updateAccountAfterTrade(params);
@@ -79,7 +79,7 @@ class AccountServiceTest {
         @DisplayName("정상적으로 동작할 경우 Account id를 반환한다.")
         void getAccountId() {
             // given
-            OrderValidationRequest request = getOrderValidationRequest(member.getId(), Type.BUY, new BigDecimal(1000));
+            OrderValidationRequest request = getOrderValidationRequest(member.getId(), Type.LIMIT_BUY, new BigDecimal(1000));
 
             // when
             Long accountId = accountService.checkAccountAndReserve(request);
@@ -92,7 +92,7 @@ class AccountServiceTest {
         @DisplayName("매도 주문의 경우 업데이트가 발생하지 않는다.")
         void updateNothingForSellOrder() {
             // given
-            OrderValidationRequest request = getOrderValidationRequest(member.getId(), Type.SELL, new BigDecimal(1000));
+            OrderValidationRequest request = getOrderValidationRequest(member.getId(), Type.LIMIT_SELL, new BigDecimal(1000));
             Account before = fakeAccountRepository.getByMemberId(member.getId());
             Long accountId = before.getId();
             BigDecimal beforeBalance = before.getBalance();
@@ -113,7 +113,7 @@ class AccountServiceTest {
         void updateReservedBalanceForBuyOrder() {
             // given
             BigDecimal price = new BigDecimal(1000);
-            OrderValidationRequest request = getOrderValidationRequest(member.getId(), Type.BUY, price);
+            OrderValidationRequest request = getOrderValidationRequest(member.getId(), Type.LIMIT_BUY, price);
 
             Account before = fakeAccountRepository.getByMemberId(member.getId());
             Long accountId = before.getId();
@@ -135,7 +135,7 @@ class AccountServiceTest {
         void throwExceptionWhenInsufficientBalance() {
             // given
             Account before = fakeAccountRepository.getByMemberId(member.getId());
-            OrderValidationRequest request = getOrderValidationRequest(member.getId(), Type.BUY, before.getBalance().add(BigDecimal.ONE));
+            OrderValidationRequest request = getOrderValidationRequest(member.getId(), Type.LIMIT_BUY, before.getBalance().add(BigDecimal.ONE));
 
             // when, then
             assertThatThrownBy(() -> accountService.checkAccountAndReserve(request))
@@ -147,7 +147,7 @@ class AccountServiceTest {
         void throwNotFoundExceptionWhenInvalidMemberId() {
             // given
             Long memberId = Long.MAX_VALUE;
-            OrderValidationRequest request = getOrderValidationRequest(memberId, Type.BUY, new BigDecimal(1000));
+            OrderValidationRequest request = getOrderValidationRequest(memberId, Type.LIMIT_BUY, new BigDecimal(1000));
 
             // when, then
             assertThatThrownBy(() -> accountService.checkAccountAndReserve(request))

@@ -64,7 +64,7 @@ public class AccountTest {
         BigDecimal expectedBalance = new BigDecimal("70000000");
 
         // when
-        account.processOrder(Type.BUY, priceToBuy, quantityToBuy);
+        account.processOrder(Type.LIMIT_BUY, priceToBuy, quantityToBuy);
 
         // then
         assertThat(account.getBalance()).isEqualTo(expectedBalance);
@@ -78,7 +78,7 @@ public class AccountTest {
         BigDecimal quantityToBuy = new BigDecimal("2");
 
         // when & then
-        assertThatThrownBy(() -> account.processOrder(Type.BUY, priceToBuy, quantityToBuy))
+        assertThatThrownBy(() -> account.processOrder(Type.LIMIT_BUY, priceToBuy, quantityToBuy))
                 .isInstanceOf(InsufficientBalanceException.class)
                 .hasMessageContaining("주문금액")
                 .hasMessageContaining("예수금잔액")
@@ -94,7 +94,7 @@ public class AccountTest {
         BigDecimal expectedBalance = new BigDecimal("130000000");
 
         // when
-        account.processOrder(Type.SELL, priceToSell, quantityToSell);
+        account.processOrder(Type.LIMIT_SELL, priceToSell, quantityToSell);
 
         // then
         assertThat(account.getBalance()).isEqualTo(expectedBalance);

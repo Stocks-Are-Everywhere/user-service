@@ -46,7 +46,7 @@ class HoldingsServiceTest {
         void getExistingHoldings() {
             // given
             UpdateHoldingsDto params
-                    = createUpdateHoldingsDto(Type.SELL, new BigDecimal(1000), new BigDecimal(10));
+                    = createUpdateHoldingsDto(Type.LIMIT_SELL, new BigDecimal(1000), new BigDecimal(10));
 
             // when
             holdingsService.updateHoldingsAfterTrade(params);
@@ -61,7 +61,7 @@ class HoldingsServiceTest {
         @DisplayName("보유 내역이 존재하지 않을 경우 새롭게 생성하여 저장한다.")
         void createHoldingsWhenHoldingsNotExist() {
             // given
-            UpdateHoldingsDto params = new UpdateHoldingsDto(Type.BUY, ACCOUNT_ID, "first", new BigDecimal(1000), new BigDecimal(10));
+            UpdateHoldingsDto params = new UpdateHoldingsDto(Type.LIMIT_BUY, ACCOUNT_ID, "first", new BigDecimal(1000), new BigDecimal(10));
 
             // when
             holdingsService.updateHoldingsAfterTrade(params);
@@ -77,7 +77,7 @@ class HoldingsServiceTest {
         @DisplayName("매도 주문을 업데이트 할 경우, reserved, total quantity 모두 감소시킨다.")
         void updateHoldingsForSellOrder() {
             // given
-            UpdateHoldingsDto params = createUpdateHoldingsDto(Type.SELL, new BigDecimal(1000), new BigDecimal(10));
+            UpdateHoldingsDto params = createUpdateHoldingsDto(Type.LIMIT_SELL, new BigDecimal(1000), new BigDecimal(10));
             Holdings holdings = holdingsRepository.getByAccountIdAndCompanyCode(ACCOUNT_ID, COMPANY_CODE);
             BigDecimal beforeReservedQuantity = holdings.getReservedQuantity();
             BigDecimal beforeQuantity = holdings.getQuantity();
@@ -96,7 +96,7 @@ class HoldingsServiceTest {
         @DisplayName("매수 주문을 업데이트 할 경우, total quantity를 증가시킨다.")
         void updateHoldingsForBuyOrder() {
             // given
-            UpdateHoldingsDto params = createUpdateHoldingsDto(Type.BUY, new BigDecimal(1000), new BigDecimal(10));
+            UpdateHoldingsDto params = createUpdateHoldingsDto(Type.LIMIT_BUY, new BigDecimal(1000), new BigDecimal(10));
             Holdings holdings = holdingsRepository.getByAccountIdAndCompanyCode(ACCOUNT_ID, COMPANY_CODE);
             BigDecimal beforeReservedQuantity = holdings.getReservedQuantity();
             BigDecimal beforeQuantity = holdings.getQuantity();
@@ -120,7 +120,7 @@ class HoldingsServiceTest {
         @DisplayName("매수 주문일 경우 업데이트가 발생하지 않는다.")
         void validateHoldingsForBuyOrder() {
             // given
-            OrderValidationRequest request = createOrderValidationRequest(Type.BUY, BigDecimal.ONE, BigDecimal.ONE);
+            OrderValidationRequest request = createOrderValidationRequest(Type.LIMIT_BUY, BigDecimal.ONE, BigDecimal.ONE);
             Holdings holdings = holdingsRepository.getByAccountIdAndCompanyCode(ACCOUNT_ID, COMPANY_CODE);
             BigDecimal beforeReservedQuantity = holdings.getReservedQuantity();
             BigDecimal beforeQuantity = holdings.getQuantity();
@@ -138,7 +138,7 @@ class HoldingsServiceTest {
         @DisplayName("매도 주문일 경우 reservedQuantity에 주문 수량을 추가한다.")
         void validateHoldingsForSellOrder() {
             // given
-            OrderValidationRequest request = createOrderValidationRequest(Type.SELL, BigDecimal.ONE, BigDecimal.ONE);
+            OrderValidationRequest request = createOrderValidationRequest(Type.LIMIT_SELL, BigDecimal.ONE, BigDecimal.ONE);
             Holdings holdings = holdingsRepository.getByAccountIdAndCompanyCode(ACCOUNT_ID, COMPANY_CODE);
             BigDecimal beforeReservedQuantity = holdings.getReservedQuantity();
             BigDecimal beforeQuantity = holdings.getQuantity();
@@ -159,7 +159,7 @@ class HoldingsServiceTest {
             OrderValidationRequest request = new OrderValidationRequest(
                     1L,
                     "InvalidCompanyCode",
-                    Type.SELL,
+                    Type.LIMIT_SELL,
                     BigDecimal.ONE,
                     BigDecimal.ONE
             );
@@ -173,7 +173,7 @@ class HoldingsServiceTest {
         @DisplayName("매도 주문일 경우, 입력한 종목에 대한 보유 주식의 개수가 부족할 경우 예외가 발생한다.")
         void throwExceptionWhenSellingExceedingOwnedQuantity() {
             // given
-            OrderValidationRequest request = createOrderValidationRequest(Type.SELL, BigDecimal.ONE, new BigDecimal(1000));
+            OrderValidationRequest request = createOrderValidationRequest(Type.LIMIT_SELL, BigDecimal.ONE, new BigDecimal(1000));
             Holdings holdings = createHoldings(new BigDecimal(10));
             holdingsRepository.save(holdings);
 
