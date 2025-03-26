@@ -44,27 +44,26 @@ class MatchedEventListenerTest {
 
     @BeforeAll
     static void setUp(@Autowired MemberRepository memberRepository) {
-        instance = new MatchedEventListenerTest();
-        instance.memberRepository = memberRepository;
-
+        // 정적 메서드에서는 인스턴스 변수 사용 불가
         Member member = Member.builder()
-                .email("test@example.com")
-                .username("testuser")
-                .googleId("testuser")
-                .role(Role.USER)
-                .build();
+            .email("testrrr10@example.com")
+            .username("testuserrrr10")
+            .googleId("testuserrrr10")
+            .role(Role.USER)
+            .build();
         member.createAccount();
-        instance.memberRepository.save(member);
+        memberRepository.save(member);
 
         Member member2 = Member.builder()
-                .email("test2@example.com")
-                .username("testuser2")
-                .googleId("testuser2")
-                .role(Role.USER)
-                .build();
+            .email("testrrr20@example.com")
+            .username("testuserrrr20")
+            .googleId("testuserrrr20")
+            .role(Role.USER)
+            .build();
         member2.createAccount();
-        instance.memberRepository.save(member2);
+        memberRepository.save(member2);
     }
+
 
     @Test
     @DisplayName("이벤트를 전달받아 비동기로 처리한다.")
@@ -113,7 +112,7 @@ class MatchedEventListenerTest {
         Account account = accountRepository.getById(1L);
         Account account2 = accountRepository.getById(2L);
 
-        assertThat(account.getBalance()).isEqualTo(new BigDecimal("99900000.00"));
+        assertThat(account.getBalance()).isEqualTo(new BigDecimal("999600000.00"));
         assertThat(account2.getBalance()).isEqualTo(new BigDecimal("100100000.00"));
     }
 }

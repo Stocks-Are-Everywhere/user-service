@@ -1,7 +1,16 @@
+server:
+  port: 8083
+
 spring:
   application:
     name: user-service
-
+  rabbitmq:
+    host: rabbitmq
+    port: 5672
+    username: guest
+    password: guest
+  main:
+    allow-bean-definition-overriding: true
   config:
     import: classpath:/env.properties
 
@@ -12,7 +21,7 @@ spring:
     password: ${DB_PASSWORD}
 
   jpa:
-    hibernate.ddl-auto: create
+    hibernate.ddl-auto: update
     show-sql: true
     properties:
       hibernate.criteria.literal_handling_mode: BIND
@@ -42,4 +51,8 @@ google:
 chrome:
   extension:
     id: ${CHROME_EXTENSION_ID}
+
+grpc:
+  server:
+    port: 9090
 

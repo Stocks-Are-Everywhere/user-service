@@ -7,4 +7,6 @@ import java.util.Optional;
 
 public interface HoldingsJpaRepository extends JpaRepository<Holdings, Long> {
 	Optional<Holdings> findByAccountIdAndCompanyCode(final Long accountId, final String companyCode);
+	Optional<Holdings> getByAccountIdAndCompanyCode(final Long accountId, final String companyCode);
+
 }

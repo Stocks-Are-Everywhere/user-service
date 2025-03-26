@@ -5,8 +5,6 @@ import com.onseju.userservice.account.service.AccountService;
 import com.onseju.userservice.holding.service.HoldingsService;
 import com.onseju.userservice.listener.ordered.OrderedEvent;
 import com.onseju.userservice.listener.ordered.OrderedEventListener;
-import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,76 +14,92 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
+import static org.assertj.core.api.Assertions.assertThatCode;
 
 @ExtendWith(MockitoExtension.class)
-public class OrderedEventListenerTest {
+class OrderedEventListenerTest {
 
-    @InjectMocks
-    private OrderedEventListener orderedEventListener;
+	@Mock
+	private AccountService accountService;
 
-    @Mock
-    private AccountService accountService;
+	@Mock
+	private HoldingsService holdingsService;
 
-    @Mock
-    private HoldingsService holdingsService;
+	@Mock
+	private EventMapper eventMapper;
 
-    private final EventMapper eventMapper = new EventMapper();
+	@InjectMocks
+	private OrderedEventListener orderedEventListener;
 
-    @BeforeEach
-    void setUp() {
-        orderedEventListener = new OrderedEventListener(holdingsService, accountService, eventMapper);
-    }
+	@Test
+	@DisplayName("지정가 매도 이벤트를 전달받아 처리한다.")
+	void handleLimitSellOrderedEvent() {
+		// given
+		OrderedEvent orderedEvent = createOrderedEvent(Type.LIMIT_SELL);
 
-    @Test
-    @DisplayName("이벤트를 전달받아 비동기로 처리한다.")
-    void handleOrderedEvent() {
-        // given
-        OrderedEvent orderedEvent = new OrderedEvent(
-                1L,
-                "005930",
-                Type.SELL,
-                new BigDecimal(10),
-                BigDecimal.ZERO,
-                BigDecimal.valueOf(1000),
-                LocalDateTime.of(2025, 1, 1, 1, 1),
-                1L
-        );
+		// when & then
+		assertThatCode(() -> orderedEventListener.handleOrderedEvent(orderedEvent))
+			.doesNotThrowAnyException();
 
-        // when
-        CompletableFuture.runAsync(() -> orderedEventListener.handleOrderedEvent(orderedEvent))
-                .orTimeout(2, TimeUnit.SECONDS) // 비동기 실행을 기다림
-                .join();
+		verify(accountService).reserve(any());
+		verify(holdingsService).updateHoldingsAfterTrade(any());
+	}
 
-        // then
-        Assertions.assertThatCode(() -> orderedEventListener.handleOrderedEvent(orderedEvent))
-                .doesNotThrowAnyException();
-    }
+	@Test
+	@DisplayName("시장가 매도 이벤트를 전달받아 처리한다.")
+	void handleMarketSellOrderedEvent() {
+		// given
+		OrderedEvent orderedEvent = createOrderedEvent(Type.MARKET_SELL);
 
-    @Test
-    @DisplayName("이벤트 내용을 처리하기 위해 Account, Holdings에 예약 처리한다.")
-    void processOrderedEvent() {
-        // given
-        OrderedEvent orderedEvent = new OrderedEvent(
-                1L,
-                "005930",
-                Type.SELL,
-                new BigDecimal(10),
-                BigDecimal.ZERO,
-                BigDecimal.valueOf(1000),
-                LocalDateTime.of(2025, 1, 1, 1, 1),
-                1L
-        );
+		// when & then
+		assertThatCode(() -> orderedEventListener.handleOrderedEvent(orderedEvent))
+			.doesNotThrowAnyException();
 
-        // when
-        orderedEventListener.handleOrderedEvent(orderedEvent);
+		verify(accountService).reserve(any());
+		verify(holdingsService).updateHoldingsAfterTrade(any());
+	}
 
-        // then
-        verify(accountService).reserve(any());
-        verify(holdingsService).updateHoldingsAfterTrade(any());
-    }
+	@Test
+	@DisplayName("지정가 매수 이벤트를 전달받아 처리한다.")
+	void handleLimitBuyOrderedEvent() {
+		// given
+		OrderedEvent orderedEvent = createOrderedEvent(Type.LIMIT_BUY);
+
+		// when & then
+		assertThatCode(() -> orderedEventListener.handleOrderedEvent(orderedEvent))
+			.doesNotThrowAnyException();
+
+		verify(accountService).reserve(any());
+		verify(holdingsService).updateHoldingsAfterTrade(any());
+	}
+
+	@Test
+	@DisplayName("시장가 매수 이벤트를 전달받아 처리한다.")
+	void handleMarketBuyOrderedEvent() {
+		// given
+		OrderedEvent orderedEvent = createOrderedEvent(Type.MARKET_BUY);
+
+		// when & then
+		assertThatCode(() -> orderedEventListener.handleOrderedEvent(orderedEvent))
+			.doesNotThrowAnyException();
+
+		verify(accountService).reserve(any());
+		verify(holdingsService).updateHoldingsAfterTrade(any());
+	}
+
+	private OrderedEvent createOrderedEvent(Type type) {
+		return new OrderedEvent(
+			1L,
+			"005930",
+			type,
+			new BigDecimal("10"),
+			BigDecimal.ZERO,
+			BigDecimal.valueOf(1000),
+			LocalDateTime.of(2025, 1, 1, 1, 1),
+			1L
+		);
+	}
 }

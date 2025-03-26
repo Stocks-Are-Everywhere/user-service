@@ -23,14 +23,14 @@ public class MatchedEventListener {
 
         // 1. 계좌 잔액 업데이트
         accountService.updateAccountAfterTrade(
-                eventMapper.toAccountAfterTradeParams(matchedEvent, matchedEvent.buyAccountId(), Type.BUY));
+                eventMapper.toAccountAfterTradeParams(matchedEvent, matchedEvent.buyAccountId(), Type.LIMIT_BUY));
         accountService.updateAccountAfterTrade(
-                eventMapper.toAccountAfterTradeParams(matchedEvent, matchedEvent.sellAccountId(), Type.SELL));
+                eventMapper.toAccountAfterTradeParams(matchedEvent, matchedEvent.sellAccountId(), Type.LIMIT_SELL));
 
         // 2. 보유 내역 업데이트
         holdingsService.updateHoldingsAfterTrade(
-                eventMapper.toUpdateHoldingsParams(matchedEvent, matchedEvent.buyAccountId(), Type.BUY));
+                eventMapper.toUpdateHoldingsParams(matchedEvent, matchedEvent.buyAccountId(), Type.LIMIT_BUY));
         holdingsService.updateHoldingsAfterTrade(
-                eventMapper.toUpdateHoldingsParams(matchedEvent, matchedEvent.sellAccountId(), Type.SELL));
+                eventMapper.toUpdateHoldingsParams(matchedEvent, matchedEvent.sellAccountId(), Type.LIMIT_SELL));
     }
 }

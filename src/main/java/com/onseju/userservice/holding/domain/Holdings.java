@@ -89,4 +89,16 @@ public class Holdings extends BaseEntity {
 			this.softDelete(LocalDateTime.now());
 		}
 	}
+
+	private BigDecimal getAvailableQuantity() {
+		return this.quantity.subtract(this.reservedQuantity);
+	}
+
+	public boolean validateEnoughHoldings(final BigDecimal checkQuantity) {
+		return getAvailableQuantity().compareTo(checkQuantity) >= 0;
+	}
+
+	public boolean validateExistHoldings() {
+		return !this.quantity.equals(BigDecimal.ZERO);
+	}
 }

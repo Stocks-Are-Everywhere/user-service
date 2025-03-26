@@ -78,10 +78,10 @@ public class Account extends BaseEntity {
 		this.balance = this.balance.add(totalPrice);
 	}
 
-	public void validateDepositBalance(final BigDecimal totalPrice) {
+	public boolean validateDepositBalance(final BigDecimal totalPrice) {
 		final BigDecimal availableBalance = getAvailableBalance();
-		if (availableBalance.compareTo(totalPrice) < 0) {
-			throw new InsufficientBalanceException("주문금액이 예수금잔액을 초과합니다.");
-		}
+		return availableBalance.compareTo(totalPrice) >= 0;
 	}
+
+
 }
