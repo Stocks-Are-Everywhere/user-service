@@ -1,18 +1,18 @@
+server:
+  port: 8083
+
 spring:
   application:
     name: user-service
 
-  config:
-    import: classpath:/env.properties
-
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: ${DB_URL}
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
+    url: jdbc:mysql://localhost:3303/user-onseju
+    username: root
+    password: root
 
   jpa:
-    hibernate.ddl-auto: create
+    hibernate.ddl-auto: update
     show-sql: true
     properties:
       hibernate.criteria.literal_handling_mode: BIND
@@ -24,22 +24,28 @@ spring:
 
     database-platform: org.hibernate.dialect.MySQL8Dialect
 
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: admin
+    password: admin123
+    virtual-host: /
+
 jwt:
   secret:
-    key: ${JWT_SECRET_KEY}
+    key: 7Iqk7YyM66W07YOA7L2U65Sp7YG065+9U3ByaW5n6rCV7J2Y7Yqc7YSw7LWc7JuQ67mI7J6F64uI64ukLg==
 
 google:
   client:
-    id: ${GOOGLE_CLIENT_ID}
-    secret: ${GOOGLE_CLIENT_SECRET}
+    id: 112913425466-bmgoe7kca5d447g7p8i58oqka4g7r4fg.apps.googleusercontent.com
+    secret: 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
   redirect:
-    uri: ${GOOGLE_REDIRECT_URI}
+    uri: http://localhost:3000/auth/callback
   token:
-    uri: ${GOOGLE_TOKEN_URI}
+    uri: https://oauth2.googleapis.com/token
   userinfo:
-    uri: ${GOOGLE_USER_INFO}
+    uri: https://www.googleapis.com/oauth2/v3/userinfo
 
 chrome:
   extension:
-    id: ${CHROME_EXTENSION_ID}
-
+    id: pijljcfdkaenmmlngfedhoffjfopfoef

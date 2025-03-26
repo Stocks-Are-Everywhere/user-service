@@ -1,8 +1,13 @@
 package com.onseju.userservice.account.domain;
 
+import static jakarta.persistence.FetchType.*;
+
+import java.math.BigDecimal;
+
 import com.onseju.userservice.account.exception.InsufficientBalanceException;
 import com.onseju.userservice.global.entity.BaseEntity;
 import com.onseju.userservice.member.domain.Member;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -17,10 +22,6 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 
-import java.math.BigDecimal;
-
-import static jakarta.persistence.FetchType.LAZY;
-
 @Entity
 @Getter
 @SuperBuilder
@@ -31,6 +32,7 @@ public class Account extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "account_id")
 	private Long id;
 
 	@Column(nullable = false)
@@ -51,6 +53,7 @@ public class Account extends BaseEntity {
 
 	// 예약 주문 처리
 	public void processReservedOrder(final BigDecimal amount) {
+		validateDepositBalance(amount);
 		this.reservedBalance = this.reservedBalance.add(amount);
 	}
 
@@ -60,7 +63,6 @@ public class Account extends BaseEntity {
 
 	public void processOrder(final Type type, final BigDecimal price, final BigDecimal quantity) {
 		final BigDecimal totalPrice = price.multiply(quantity);
-
 		if (type.isBuy()) {
 			processBuyOrder(totalPrice);
 		} else {
@@ -81,7 +83,7 @@ public class Account extends BaseEntity {
 	public void validateDepositBalance(final BigDecimal totalPrice) {
 		final BigDecimal availableBalance = getAvailableBalance();
 		if (availableBalance.compareTo(totalPrice) < 0) {
-			throw new InsufficientBalanceException("주문금액이 예수금잔액을 초과합니다.");
+			throw new InsufficientBalanceException();
 		}
 	}
 }

@@ -1,12 +1,15 @@
 package com.onseju.userservice.account.service;
 
-import com.onseju.userservice.account.domain.Account;
-import com.onseju.userservice.account.service.dto.AccountAfterTradeParams;
-import com.onseju.userservice.account.service.dto.ReserveAccountDto;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.onseju.userservice.account.domain.Account;
+import com.onseju.userservice.account.service.dto.AfterTradeAccountDto;
+import com.onseju.userservice.account.service.dto.BeforeTradeAccountDto;
+import com.onseju.userservice.account.service.repository.AccountRepository;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RequiredArgsConstructor
 @Service
@@ -16,20 +19,21 @@ public class AccountService {
 	private final AccountRepository accountRepository;
 
 	@Transactional
-	public void updateAccountAfterTrade(final AccountAfterTradeParams accountAfterTradeParams) {
-		Account account = accountRepository.getById(accountAfterTradeParams.accountId());
+	public void updateAccountAfterTrade(final AfterTradeAccountDto dto) {
+		Account account = accountRepository.getById(dto.accountId());
 		account.processOrder(
-				accountAfterTradeParams.type(),
-				accountAfterTradeParams.price(),
-				accountAfterTradeParams.quantity()
+				dto.type(),
+				dto.price(),
+				dto.quantity()
 		);
 	}
 
 	@Transactional
-	public void reserve(final ReserveAccountDto dto) {
+	public void reserve(final BeforeTradeAccountDto dto) {
 		if (dto.type().isBuy()) {
 			Account account = accountRepository.getById(dto.accountId());
 			account.processReservedOrder(dto.price().multiply(dto.totalQuantity()));
+			accountRepository.save(account);
 		}
 	}
 }

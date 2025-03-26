@@ -1,12 +1,13 @@
 package com.onseju.userservice.member.service;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.TextNode;
-import com.onseju.userservice.account.service.AccountRepository;
-import com.onseju.userservice.global.jwt.JwtUtil;
-import com.onseju.userservice.member.controller.response.LoginResponseDto;
-import com.onseju.userservice.member.domain.Member;
-import jakarta.servlet.http.HttpServletResponse;
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.net.URI;
+import java.util.Optional;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,83 +22,79 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.net.URI;
-import java.util.Optional;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.TextNode;
+import com.onseju.userservice.account.service.repository.AccountRepository;
+import com.onseju.userservice.global.jwt.JwtUtil;
+import com.onseju.userservice.member.controller.response.LoginResponseDto;
+import com.onseju.userservice.member.domain.Member;
+import com.onseju.userservice.member.service.repository.MemberRepository;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.anyString;
-import static org.mockito.Mockito.argThat;
-import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.isNull;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import jakarta.servlet.http.HttpServletResponse;
 
 @ExtendWith(MockitoExtension.class)
 class GoogleOAuthServiceTest {
 
-    @InjectMocks
-    private GoogleOAuthService googleOAuthService;
+	@InjectMocks
+	private GoogleOAuthService googleOAuthService;
 
-    @Mock
-    private MemberRepository memberRepository;
+	@Mock
+	private MemberRepository memberRepository;
 
 	@Mock
 	private AccountRepository accountRepository;
 
 	@Mock
-    private JwtUtil jwtUtil;
+	private JwtUtil jwtUtil;
 
 	@Mock
 	private HttpServletResponse response;
 
 	@Mock
-    private RestTemplate restTemplate;  // RestTemplate를 테스트 클래스에서 모킹
+	private RestTemplate restTemplate;  // RestTemplate를 테스트 클래스에서 모킹
 
 	private final String email = "test@example.com";
 
-    @BeforeEach
-    void setUp() {
-        // 필수 필드 값 설정
-        ReflectionTestUtils.setField(googleOAuthService, "tokenUri", "https://test.com/token");
-        ReflectionTestUtils.setField(googleOAuthService, "clientId", "test-client-id");
-        ReflectionTestUtils.setField(googleOAuthService, "clientSecret", "test-client-secret");
-        ReflectionTestUtils.setField(googleOAuthService, "redirectUri", "http://localhost:8080/callback");
+	@BeforeEach
+	void setUp() {
+		// 필수 필드 값 설정
+		ReflectionTestUtils.setField(googleOAuthService, "tokenUri", "https://test.com/token");
+		ReflectionTestUtils.setField(googleOAuthService, "clientId", "test-client-id");
+		ReflectionTestUtils.setField(googleOAuthService, "clientSecret", "test-client-secret");
+		ReflectionTestUtils.setField(googleOAuthService, "redirectUri", "http://localhost:8080/callback");
 		ReflectionTestUtils.setField(googleOAuthService, "userInfoUri", "https://test.com/userinfo");
-     
-        // 1. Access Token 응답 모킹
-        JsonNode tokenResponse = mock(JsonNode.class);
-        when(tokenResponse.get("access_token")).thenReturn(new TextNode("mocked_access_token"));
-        when(restTemplate.postForEntity(
-            any(URI.class),
-            isNull(),
-            eq(JsonNode.class)
-        )).thenReturn(new ResponseEntity<>(tokenResponse, HttpStatus.OK));
 
-        // 2. User Info 응답 모킹
-        JsonNode userInfoResponse = mock(JsonNode.class);
-        when(userInfoResponse.get("email")).thenReturn(new TextNode(email));
-        when(userInfoResponse.get("sub")).thenReturn(new TextNode("123456789"));
+		// 1. Access Token 응답 모킹
+		JsonNode tokenResponse = mock(JsonNode.class);
+		when(tokenResponse.get("access_token")).thenReturn(new TextNode("mocked_access_token"));
+		when(restTemplate.postForEntity(
+				any(URI.class),
+				isNull(),
+				eq(JsonNode.class)
+		)).thenReturn(new ResponseEntity<>(tokenResponse, HttpStatus.OK));
 
-        // exchange 메서드 모킹
-        when(restTemplate.exchange(
-            anyString(),                // userInfoUri
-            eq(HttpMethod.GET),        // HTTP 메서드
-            argThat(request -> {       // HttpEntity 매칭
-                HttpHeaders headers = request.getHeaders();
-                return headers.containsKey("Authorization") &&
-                    headers.getFirst("Authorization").startsWith("Bearer ");
-            }),
-            eq(JsonNode.class)         // 응답 타입
-        )).thenReturn(new ResponseEntity<>(userInfoResponse, HttpStatus.OK));
-    
-    }
+		// 2. User Info 응답 모킹
+		JsonNode userInfoResponse = mock(JsonNode.class);
+		when(userInfoResponse.get("email")).thenReturn(new TextNode(email));
+		when(userInfoResponse.get("sub")).thenReturn(new TextNode("123456789"));
 
-    @Test
+		// exchange 메서드 모킹
+		when(restTemplate.exchange(
+				anyString(),                // userInfoUri
+				eq(HttpMethod.GET),        // HTTP 메서드
+				argThat(request -> {       // HttpEntity 매칭
+					HttpHeaders headers = request.getHeaders();
+					return headers.containsKey("Authorization") &&
+							headers.getFirst("Authorization").startsWith("Bearer ");
+				}),
+				eq(JsonNode.class)         // 응답 타입
+		)).thenReturn(new ResponseEntity<>(userInfoResponse, HttpStatus.OK));
+
+	}
+
+	@Test
 	@DisplayName("Create account when new user created")
-    void whenNewUserCreated_thenAccountShouldBeCreated() throws IOException {
+	void whenNewUserCreated_thenAccountShouldBeCreated() throws IOException {
 		// given
 		String username = email.split("@")[0];
 		BigDecimal expectedBalance = new BigDecimal(100000000);
