@@ -1,7 +1,12 @@
 package com.onseju.userservice.member.domain;
 
+import static jakarta.persistence.CascadeType.*;
+
+import java.math.BigDecimal;
+
 import com.onseju.userservice.account.domain.Account;
 import com.onseju.userservice.global.entity.BaseEntity;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -17,10 +22,6 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 
-import java.math.BigDecimal;
-
-import static jakarta.persistence.CascadeType.ALL;
-
 @Entity
 @Getter
 @SuperBuilder
@@ -31,6 +32,7 @@ public class Member extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "member_id")
 	private Long id;
 
 	@Column(nullable = false, unique = true)
