@@ -1,11 +1,14 @@
-package com.onseju.userservice.member.repository;
-
-import com.onseju.userservice.member.domain.Member;
-import com.onseju.userservice.member.service.MemberRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
+package com.onseju.userservice.member.repository.impls;
 
 import java.util.Optional;
+
+import org.springframework.stereotype.Repository;
+
+import com.onseju.userservice.member.domain.Member;
+import com.onseju.userservice.member.repository.MemberJpaRepository;
+import com.onseju.userservice.member.service.repository.MemberRepository;
+
+import lombok.RequiredArgsConstructor;
 
 @Repository
 @RequiredArgsConstructor
