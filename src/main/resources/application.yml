@@ -49,3 +49,6 @@ google:
 chrome:
   extension:
     id: pijljcfdkaenmmlngfedhoffjfopfoef
+grpc:
+  server:
+    port: 9090
