@@ -22,7 +22,7 @@ public class MatchedEventListener {
 
     @Async
     @Transactional
-    @RabbitListener(queues = "matched.queue")
+    @RabbitListener(queues = "matched.user.queue")
     public void handleMatchedEvent(final MatchedEvent matchedEvent) {
 
         log.info("Matched event: {}", matchedEvent);
