@@ -1,4 +1,4 @@
-package com.onseju.userservice.holding.service.dto;
+package com.onseju.userservice.holdings.service.dto;
 
 import com.onseju.userservice.account.domain.Type;
 

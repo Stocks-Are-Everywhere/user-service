@@ -1,4 +1,4 @@
-package com.onseju.userservice.member.controller;
+package com.onseju.userservice.member.controller.external;
 
 import com.onseju.userservice.member.controller.response.LoginResponseDto;
 import com.onseju.userservice.member.service.GoogleOAuthService;

@@ -1,4 +1,4 @@
-package com.onseju.userservice.holding.domain;
+package com.onseju.userservice.holdings.domain;
 
 import com.onseju.userservice.account.domain.Type;
 import org.junit.jupiter.api.BeforeEach;

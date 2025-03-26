@@ -1,7 +1,7 @@
-package com.onseju.userservice.holding.fake;
+package com.onseju.userservice.holdings.fake;
 
-import com.onseju.userservice.holding.domain.Holdings;
-import com.onseju.userservice.holding.service.HoldingsRepository;
+import com.onseju.userservice.holdings.domain.Holdings;
+import com.onseju.userservice.holdings.service.HoldingsRepository;
 
 import java.math.BigDecimal;
 import java.util.Comparator;

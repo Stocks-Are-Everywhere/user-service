@@ -1,6 +1,6 @@
-package com.onseju.userservice.holding.repository;
+package com.onseju.userservice.holdings.repository;
 
-import com.onseju.userservice.holding.domain.Holdings;
+import com.onseju.userservice.holdings.domain.Holdings;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

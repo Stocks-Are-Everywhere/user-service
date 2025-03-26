@@ -3,7 +3,7 @@ package com.onseju.userservice.listener;
 import com.onseju.userservice.account.domain.Type;
 import com.onseju.userservice.account.service.dto.AccountAfterTradeParams;
 import com.onseju.userservice.account.service.dto.ReserveAccountDto;
-import com.onseju.userservice.holding.service.dto.UpdateHoldingsDto;
+import com.onseju.userservice.holdings.service.dto.UpdateHoldingsDto;
 import com.onseju.userservice.listener.matched.MatchedEvent;
 import com.onseju.userservice.listener.ordered.OrderedEvent;
 import org.springframework.stereotype.Component;

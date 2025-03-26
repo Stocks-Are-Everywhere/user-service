@@ -1,6 +1,6 @@
-package com.onseju.userservice.holding.service;
+package com.onseju.userservice.holdings.service;
 
-import com.onseju.userservice.holding.domain.Holdings;
+import com.onseju.userservice.holdings.domain.Holdings;
 
 public interface HoldingsRepository {
 

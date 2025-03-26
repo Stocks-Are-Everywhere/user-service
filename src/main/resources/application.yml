@@ -21,6 +21,14 @@ spring:
 
     database-platform: org.hibernate.dialect.MySQL8Dialect
 
+  rabbitmq:
+    host: ${RABBITMQ_HOST}
+    port: ${RABBITMQ_PORT}
+    username: ${RABBITMQ_USERNAME}
+    password: ${RABBITMQ_PASSWORD}
+    publisher-confirm-type: correlated
+    publisher-returns: true
+
 jwt:
   secret:
     key: ${JWT_SECRET_KEY}

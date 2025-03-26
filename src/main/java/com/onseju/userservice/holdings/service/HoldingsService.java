@@ -1,7 +1,7 @@
-package com.onseju.userservice.holding.service;
+package com.onseju.userservice.holdings.service;
 
-import com.onseju.userservice.holding.domain.Holdings;
-import com.onseju.userservice.holding.service.dto.UpdateHoldingsDto;
+import com.onseju.userservice.holdings.domain.Holdings;
+import com.onseju.userservice.holdings.service.dto.UpdateHoldingsDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
