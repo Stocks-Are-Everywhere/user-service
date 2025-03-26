@@ -4,7 +4,7 @@ import org.springframework.stereotype.Component;
 
 import com.onseju.userservice.account.domain.Type;
 import com.onseju.userservice.events.MatchedEvent;
-import com.onseju.userservice.global.BeforeTradeOrderDto;
+import com.onseju.userservice.order.BeforeTradeOrderDto;
 import com.onseju.userservice.holding.service.dto.AfterTradeHoldingsDto;
 import com.onseju.userservice.holding.service.dto.BeforeTradeHoldingsDto;
 
@@ -25,10 +25,14 @@ public class HoldingsMapper {
 				.build();
 	}
 
-	public BeforeTradeHoldingsDto toBeforeTradeHoldingsDto(final BeforeTradeOrderDto dto, final Type type) {
+	public BeforeTradeHoldingsDto toBeforeTradeHoldingsDto(
+			final BeforeTradeOrderDto dto,
+			final Type type,
+			final Long accountId
+	) {
 		return BeforeTradeHoldingsDto.builder()
 				.type(type)
-				.accountId(dto.accountId())
+				.accountId(accountId)
 				.companyCode(dto.companyCode())
 				.totalQuantity(dto.totalQuantity())
 				.build();
