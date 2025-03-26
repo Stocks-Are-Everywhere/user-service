@@ -1,4 +1,4 @@
-package com.onseju.userservice.holding.service;
+package com.onseju.userservice.holding.service.repository;
 
 import com.onseju.userservice.holding.domain.Holdings;
 
