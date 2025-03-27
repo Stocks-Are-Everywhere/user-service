@@ -57,20 +57,20 @@ class MatchedEventListenerTest {
 		instance.memberRepository = memberRepository;
 
 		Member member = Member.builder()
-				.email("test@example.com")
-				.username("testuser")
-				.googleId("testuser")
-				.role(Role.USER)
-				.build();
+			.email("test@example.com")
+			.username("testuser")
+			.googleId("testuser")
+			.role(Role.USER)
+			.build();
 		member.createAccount();
 		instance.memberRepository.save(member);
 
 		Member member2 = Member.builder()
-				.email("test2@example.com")
-				.username("testuser2")
-				.googleId("testuser2")
-				.role(Role.USER)
-				.build();
+			.email("test2@example.com")
+			.username("testuser2")
+			.googleId("testuser2")
+			.role(Role.USER)
+			.build();
 		member2.createAccount();
 		instance.memberRepository.save(member2);
 	}
@@ -92,12 +92,14 @@ class MatchedEventListenerTest {
 
 		// when
 		CompletableFuture.runAsync(() -> userEventListener.handleOrderMatched(matchedEvent))
+
 				.orTimeout(2, TimeUnit.SECONDS) // 비동기 실행을 기다림
 				.join();
 
 		// then
 		Assertions.assertThatCode(() -> userEventListener.handleOrderMatched(matchedEvent))
 				.doesNotThrowAnyException();
+
 	}
 
 	@Test
@@ -105,6 +107,7 @@ class MatchedEventListenerTest {
 	void updateAccounts() {
 		// given
 		UpdateEvent matchedEvent = new UpdateEvent(
+
 				"005930",
 				1L,
 				1L,
@@ -113,6 +116,7 @@ class MatchedEventListenerTest {
 				BigDecimal.valueOf(100),
 				BigDecimal.valueOf(1000),
 				Instant.now().getEpochSecond()
+
 		);
 
 		// when

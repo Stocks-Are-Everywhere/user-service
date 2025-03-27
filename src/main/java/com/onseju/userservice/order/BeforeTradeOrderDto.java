@@ -1,7 +1,11 @@
 package com.onseju.userservice.order;
 
+
 import java.math.BigDecimal;
 
+import lombok.Builder;
+
+@Builder
 public record BeforeTradeOrderDto(
 		String companyCode,
 		String type,
@@ -10,4 +14,5 @@ public record BeforeTradeOrderDto(
 		Long timestamp,
 		Long memberId
 ) {
+
 }
