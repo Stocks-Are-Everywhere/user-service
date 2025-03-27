@@ -50,3 +50,8 @@ google:
     uri: ${GOOGLE_TOKEN_URI}
   userinfo:
     uri: ${GOOGLE_USER_INFO}
+    
+    
+grpc:
+  server:
+    port: 9090
