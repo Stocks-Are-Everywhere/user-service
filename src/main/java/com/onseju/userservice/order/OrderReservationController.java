@@ -1,4 +1,4 @@
-package com.onseju.userservice.global;
+package com.onseju.userservice.order;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -11,14 +11,13 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/api/user-service")
 @RequiredArgsConstructor
-public class UserValidateController {
+public class OrderReservationController {
 
-	private final UserValidateService userValidateService;
+	private final OrderReservationService orderReservationService;
 
 	@PostMapping("/validate")
-	public ResponseEntity<Void> validateUserInfoForOrder(@RequestBody final BeforeTradeOrderDto dto) {
-		userValidateService.validateUserInfoForOrder(dto);
-		return ResponseEntity.ok().build();
+	public ResponseEntity<OrderReservationResponse> validateUserInfoForOrder(@RequestBody final BeforeTradeOrderDto dto) {
+		return ResponseEntity.ok(orderReservationService.validateUserInfoForOrder(dto));
 	}
 
 }

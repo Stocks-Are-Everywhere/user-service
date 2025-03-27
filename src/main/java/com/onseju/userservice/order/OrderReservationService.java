@@ -1,20 +1,16 @@
-package com.onseju.userservice.global;
-
-import org.springframework.stereotype.Service;
+package com.onseju.userservice.order;
 
 import com.onseju.userservice.account.domain.Type;
 import com.onseju.userservice.account.mapper.AccountMapper;
 import com.onseju.userservice.account.service.AccountService;
-import com.onseju.userservice.account.service.dto.BeforeTradeAccountDto;
 import com.onseju.userservice.holding.mapper.HoldingsMapper;
 import com.onseju.userservice.holding.service.HoldingsService;
-import com.onseju.userservice.holding.service.dto.BeforeTradeHoldingsDto;
-
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class UserValidateService {
+public class OrderReservationService {
 
 	private final AccountService accountService;
 	private final AccountMapper accountMapper;
@@ -22,14 +18,13 @@ public class UserValidateService {
 	private final HoldingsService holdingsService;
 	private final HoldingsMapper holdingsMapper;
 
-	public void validateUserInfoForOrder(final BeforeTradeOrderDto dto) {
+	public OrderReservationResponse validateUserInfoForOrder(final BeforeTradeOrderDto dto) {
 		final Type type = convertType(dto.type());
 
-		final BeforeTradeAccountDto beforeTradeAccountDto = accountMapper.toBeforeTradeAccountDto(dto, type);
-		accountService.reserve(beforeTradeAccountDto);
+		final Long accountId = accountService.reserve(accountMapper.toBeforeTradeAccountDto(dto, type));
+		holdingsService.reserve(holdingsMapper.toBeforeTradeHoldingsDto(dto, type, accountId));
 
-		final BeforeTradeHoldingsDto beforeTradeHoldingsDto = holdingsMapper.toBeforeTradeHoldingsDto(dto, type);
-		holdingsService.reserve(beforeTradeHoldingsDto);
+		return new OrderReservationResponse(accountId);
 	}
 
 	private Type convertType(final String type) {

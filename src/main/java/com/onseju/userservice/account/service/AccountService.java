@@ -29,11 +29,12 @@ public class AccountService {
 	}
 
 	@Transactional
-	public void reserve(final BeforeTradeAccountDto dto) {
+	public Long reserve(final BeforeTradeAccountDto dto) {
+		Account account = accountRepository.getByMemberId(dto.memberId());
 		if (dto.type().isBuy()) {
-			Account account = accountRepository.getById(dto.accountId());
+			account.validateDepositBalance(dto.price().multiply(dto.totalQuantity()));
 			account.processReservedOrder(dto.price().multiply(dto.totalQuantity()));
-			accountRepository.save(account);
 		}
+		return account.getId();
 	}
 }
