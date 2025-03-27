@@ -1,4 +1,4 @@
-package com.onseju.userservice.global;
+package com.onseju.userservice.order;
 
 import java.math.BigDecimal;
 
@@ -8,6 +8,6 @@ public record BeforeTradeOrderDto(
 		BigDecimal totalQuantity,
 		BigDecimal price,
 		Long timestamp,
-		Long accountId
+		Long memberId
 ) {
 }

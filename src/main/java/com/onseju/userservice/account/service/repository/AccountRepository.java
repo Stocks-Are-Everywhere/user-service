@@ -12,4 +12,7 @@ public interface AccountRepository {
 	Account getById(final Long id);
 
 	void save(final Account account);
+
+	@Lock(LockModeType.PESSIMISTIC_READ)
+	Account getByMemberId(final Long memberId);
 }

@@ -12,7 +12,7 @@ spring:
     password: ${DB_PASSWORD}
 
   jpa:
-    hibernate.ddl-auto: create
+    hibernate.ddl-auto: update
     show-sql: true
     properties:
       hibernate.criteria.literal_handling_mode: BIND
@@ -39,3 +39,14 @@ spring:
 jwt:
   secret:
     key: ${JWT_SECRET_KEY}
+
+google:
+  client:
+    id: ${GOOGLE_CLIENT_ID}
+    secret: ${GOOGLE_CLIENT_SECRET}
+  redirect:
+    uri: ${GOOGLE_REDIRECT_URI}
+  token:
+    uri: ${GOOGLE_TOKEN_URI}
+  userinfo:
+    uri: ${GOOGLE_USER_INFO}

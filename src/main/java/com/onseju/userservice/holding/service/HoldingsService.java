@@ -27,12 +27,11 @@ public class HoldingsService {
 	@Transactional
 	public void reserve(final BeforeTradeHoldingsDto dto) {
 		if (dto.type().isSell()) {
-			final Holdings holdings = holdingsRepository.getByAccountIdAndCompanyCode(dto.accountId(),
-					dto.companyCode());
+			final Holdings holdings
+					= holdingsRepository.getByAccountIdAndCompanyCode(dto.accountId(), dto.companyCode());
 			holdings.validateExistHoldings();
 			holdings.validateEnoughHoldings(dto.totalQuantity());
 			holdings.reserveOrder(dto.totalQuantity());
-			holdingsRepository.save(holdings);
 		}
 	}
 }

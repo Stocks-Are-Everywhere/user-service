@@ -25,4 +25,10 @@ public class AccountRepositoryImpl implements AccountRepository {
 	public void save(final Account account) {
 		accountJpaRepository.save(account);
 	}
+
+	@Override
+	public Account getByMemberId(Long memberId) {
+		return accountJpaRepository.findByMemberId(memberId)
+				.orElseThrow(AccountNotFoundException::new);
+	}
 }
