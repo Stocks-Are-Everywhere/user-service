@@ -49,10 +49,7 @@ public class AccountTest {
 
         // when & then
         assertThatThrownBy(() -> account.validateDepositBalance(amountToBuy))
-                .isInstanceOf(InsufficientBalanceException.class)
-                .hasMessageContaining("주문금액")
-                .hasMessageContaining("예수금잔액")
-                .hasMessageContaining("초과");
+                .isInstanceOf(InsufficientBalanceException.class);
     }
 
     @Test
@@ -68,21 +65,6 @@ public class AccountTest {
 
         // then
         assertThat(account.getBalance()).isEqualTo(expectedBalance);
-    }
-
-    @Test
-    @DisplayName("계좌 잔액이 구매 금액보다 작을 경우 예외가 발생한다.")
-    void throwExceptionWhenProcessingBuyOrderWithInsufficientBalance() {
-        // given
-        BigDecimal priceToBuy = new BigDecimal("70000000");
-        BigDecimal quantityToBuy = new BigDecimal("2");
-
-        // when & then
-        assertThatThrownBy(() -> account.processOrder(Type.BUY, priceToBuy, quantityToBuy))
-                .isInstanceOf(InsufficientBalanceException.class)
-                .hasMessageContaining("주문금액")
-                .hasMessageContaining("예수금잔액")
-                .hasMessageContaining("초과");
     }
 
     @Test

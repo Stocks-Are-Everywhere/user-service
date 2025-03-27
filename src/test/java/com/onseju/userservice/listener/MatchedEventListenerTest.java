@@ -80,24 +80,26 @@ class MatchedEventListenerTest {
 	void handleOrderEventShouldProcessOrder() {
 		// given
 		UpdateEvent matchedEvent = new UpdateEvent(
-			"005930",
-			1L,
-			1L,
-			2L,
-			2L,
-			BigDecimal.valueOf(100),
-			BigDecimal.valueOf(1000),
-			Instant.now().getEpochSecond()
+				"005930",
+				1L,
+				1L,
+				2L,
+				2L,
+				BigDecimal.valueOf(100),
+				BigDecimal.valueOf(1000),
+				Instant.now().getEpochSecond()
 		);
 
 		// when
 		CompletableFuture.runAsync(() -> userEventListener.handleOrderMatched(matchedEvent))
-			.orTimeout(2, TimeUnit.SECONDS) // 비동기 실행을 기다림
-			.join();
+
+				.orTimeout(2, TimeUnit.SECONDS) // 비동기 실행을 기다림
+				.join();
 
 		// then
 		Assertions.assertThatCode(() -> userEventListener.handleOrderMatched(matchedEvent))
-			.doesNotThrowAnyException();
+				.doesNotThrowAnyException();
+
 	}
 
 	@Test
@@ -105,14 +107,16 @@ class MatchedEventListenerTest {
 	void updateAccounts() {
 		// given
 		UpdateEvent matchedEvent = new UpdateEvent(
-			"005930",
-			1L,
-			1L,
-			2L,
-			2L,
-			BigDecimal.valueOf(100),
-			BigDecimal.valueOf(1000),
-			Instant.now().getEpochSecond()
+
+				"005930",
+				1L,
+				1L,
+				2L,
+				2L,
+				BigDecimal.valueOf(100),
+				BigDecimal.valueOf(1000),
+				Instant.now().getEpochSecond()
+
 		);
 
 		// when

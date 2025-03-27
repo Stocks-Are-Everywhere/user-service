@@ -7,4 +7,6 @@ public interface HoldingsRepository {
 	Holdings getByAccountIdAndCompanyCode(final Long accountId, final String companyCode);
 
 	Holdings save(final Holdings holdings);
+
+	Holdings getOrDefaultByAccountIdAndCompanyCode(final Long accountId, final String companyCode);
 }
