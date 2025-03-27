@@ -21,11 +21,11 @@ public class RabbitMQConfig {
 	// Exchange 정의
 	public static final String ONSEJU_EXCHANGE = "onseju.exchange";
 
-	// Queue 정의 - 주문 서비스
-	public static final String ORDER_MATCHED_QUEUE = "order.matched.queue";
+	// Queue 정의 - 사용자 서비스
+	public static final String USER_UPDATE_QUEUE = "user.update.queue";
 
-	// Routing Key 정의
-	public static final String ORDER_MATCHED_KEY = "order.matched";
+	// Routing Key 정의 - 사용자 서비스
+	public static final String USER_UPDATE_KEY = "user.update";
 
 	// Exchange 생성
 	@Bean
@@ -33,19 +33,19 @@ public class RabbitMQConfig {
 		return new TopicExchange(ONSEJU_EXCHANGE);
 	}
 
-	// 주문 서비스 Queues
+	// 사용자 서비스 Queues
 	@Bean
-	public Queue orderMatchedQueue() {
-		return new Queue(ORDER_MATCHED_QUEUE, true);
+	public Queue userUpdateQueue() {
+		return new Queue(USER_UPDATE_QUEUE, true);
 	}
 
-	// Bindings - 주문 서비스
+	// Bindings - 사용자 서비스
 	@Bean
-	public Binding orderMatchedBinding() {
+	public Binding userUpdateBinding() {
 		return BindingBuilder
-				.bind(orderMatchedQueue())
+				.bind(userUpdateQueue())
 				.to(onsejuExchange())
-				.with(ORDER_MATCHED_KEY);
+				.with(USER_UPDATE_KEY);
 	}
 
 	// JSON 메시지 변환 설정
