@@ -4,6 +4,7 @@ import com.onseju.userservice.account.domain.Account;
 import com.onseju.userservice.account.mapper.AccountMapper;
 import com.onseju.userservice.account.service.AccountService;
 import com.onseju.userservice.account.service.repository.AccountRepository;
+import com.onseju.userservice.events.MatchedEvent;
 import com.onseju.userservice.events.UpdateEvent;
 import com.onseju.userservice.events.listener.UserEventListener;
 import com.onseju.userservice.holding.mapper.HoldingsMapper;
@@ -20,6 +21,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -57,20 +59,20 @@ class MatchedEventListenerTest {
 		instance.memberRepository = memberRepository;
 
 		Member member = Member.builder()
-				.email("test@example.com")
-				.username("testuser")
-				.googleId("testuser")
-				.role(Role.USER)
-				.build();
+			.email("test@example.com")
+			.username("testuser")
+			.googleId("testuser")
+			.role(Role.USER)
+			.build();
 		member.createAccount();
 		instance.memberRepository.save(member);
 
 		Member member2 = Member.builder()
-				.email("test2@example.com")
-				.username("testuser2")
-				.googleId("testuser2")
-				.role(Role.USER)
-				.build();
+			.email("test2@example.com")
+			.username("testuser2")
+			.googleId("testuser2")
+			.role(Role.USER)
+			.build();
 		member2.createAccount();
 		instance.memberRepository.save(member2);
 	}
@@ -79,7 +81,9 @@ class MatchedEventListenerTest {
 	@DisplayName("이벤트를 전달받아 비동기로 처리한다.")
 	void handleOrderEventShouldProcessOrder() {
 		// given
-		UpdateEvent matchedEvent = new UpdateEvent(
+		MatchedEvent matchedEvent = new MatchedEvent(
+				UUID.fromString("f47ac10b-58cc-4372-a567-0e02b2c3d479"),
+
 				"005930",
 				1L,
 				1L,
@@ -92,19 +96,22 @@ class MatchedEventListenerTest {
 
 		// when
 		CompletableFuture.runAsync(() -> userEventListener.handleOrderMatched(matchedEvent))
+
 				.orTimeout(2, TimeUnit.SECONDS) // 비동기 실행을 기다림
 				.join();
 
 		// then
 		Assertions.assertThatCode(() -> userEventListener.handleOrderMatched(matchedEvent))
 				.doesNotThrowAnyException();
+
 	}
 
 	@Test
 	@DisplayName("이벤트 내용을 Account에 반영한다.")
 	void updateAccounts() {
 		// given
-		UpdateEvent matchedEvent = new UpdateEvent(
+		MatchedEvent matchedEvent = new MatchedEvent(
+				UUID.fromString("f47ac10b-58cc-4372-a567-0e02b2c3d479"),
 				"005930",
 				1L,
 				1L,
@@ -113,6 +120,7 @@ class MatchedEventListenerTest {
 				BigDecimal.valueOf(100),
 				BigDecimal.valueOf(1000),
 				Instant.now().getEpochSecond()
+
 		);
 
 		// when
