@@ -5,9 +5,6 @@ spring:
     username: sa
     password:
 
-  config:
-    import: classpath:/env.properties
-
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
@@ -15,28 +12,28 @@ spring:
     show-sql: false
 
   rabbitmq:
-    host: ${RABBITMQ_HOST}
-    port: ${RABBITMQ_PORT}
-    username: ${RABBITMQ_USERNAME}
-    password: ${RABBITMQ_PASSWORD}
+    host: localhost
+    port: 5672
+    username: test
+    password: test
     publisher-confirm-type: correlated
     publisher-returns: true
 
 jwt:
   secret:
-    key: ${JWT_SECRET_KEY}
+    key: "dGVzdC1vbnNlamUtanRzLXNlY3JldC1rZXktMTIzNDU2Nzg5MA=="
 
 google:
   client:
-    id: ${GOOGLE_CLIENT_ID}
-    secret: ${GOOGLE_CLIENT_SECRET}
+    id: "GOOGLE_CLIENT_ID"
+    secret: "TEST_GOOGLE_CLIENT_SECRET"
   redirect:
-    uri: ${GOOGLE_REDIRECT_URI}
+    uri: "TEST_GOOGLE_REDIRECT_URI"
   token:
-    uri: ${GOOGLE_TOKEN_URI}
+    uri: "TEST_GOOGLE_TOKEN_URI"
   userinfo:
-    uri: ${GOOGLE_USER_INFO}
+    uri: "TEST_GOOGLE_USER_INFO"
 
 chrome:
   extension:
-    id: ${CHROME_EXTENSION_ID}
+    id: "TEST_CHROME_EXTENSION_ID"
