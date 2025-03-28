@@ -17,10 +17,12 @@ public class HoldingsService {
 
 	@Transactional
 	public void updateHoldingsAfterTrade(final AfterTradeHoldingsDto params) {
-		final Holdings holdings
-				= holdingsRepository.getOrDefaultByAccountIdAndCompanyCode(params.accountId(), params.companyCode());
-		holdings.updateHoldings(params.type(), params.price(), params.quantity());
-		holdingsRepository.save(holdings);
+		optimizeLoop(() -> {
+			final Holdings holdings
+					= holdingsRepository.getOrDefaultByAccountIdAndCompanyCode(params.accountId(), params.companyCode());
+			holdings.updateHoldings(params.type(), params.price(), params.quantity());
+			holdingsRepository.save(holdings);
+		});
 	}
 
 	public void reserve(final BeforeTradeHoldingsDto dto) {

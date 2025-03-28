@@ -1,4 +1,4 @@
-package com.onseju.userservice.order;
+package com.onseju.userservice.integration.concurrent;
 
 import com.onseju.userservice.account.domain.Account;
 import com.onseju.userservice.account.domain.Type;
@@ -12,6 +12,8 @@ import com.onseju.userservice.holding.service.repository.HoldingsRepository;
 import com.onseju.userservice.member.domain.Member;
 import com.onseju.userservice.member.domain.Role;
 import com.onseju.userservice.member.service.repository.MemberRepository;
+import com.onseju.userservice.order.BeforeTradeOrderDto;
+import com.onseju.userservice.order.OrderReservationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,9 +49,6 @@ class OrderReservationServiceTest {
     private HoldingsMapper holdingsMapper;
     @Autowired
     private HoldingsRepository holdingsRepository;
-
-//    Long accountId;
-//    Long memberId;
 
     @BeforeEach
     void setUp() {
