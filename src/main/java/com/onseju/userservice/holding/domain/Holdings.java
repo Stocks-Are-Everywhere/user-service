@@ -11,6 +11,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
+import jakarta.persistence.Version;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -59,8 +60,8 @@ public class Holdings extends BaseEntity {
 	@Column(nullable = false)
 	private Long accountId;
 
-//	@Version
-//	private Long version;
+	@Version
+	private Long version;
 
 	public void validateEnoughHoldings(final BigDecimal checkQuantity) {
 		if (getAvailableQuantity().compareTo(checkQuantity) < 0) {

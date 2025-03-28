@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.LongSupplier;
@@ -20,14 +19,17 @@ public class AccountService {
 
 	private final AccountRepository accountRepository;
 
-	@Transactional
 	public void updateAccountAfterTrade(final AfterTradeAccountDto dto) {
-		Account account = accountRepository.getById(dto.accountId());
-		account.processOrder(
-				dto.type(),
-				dto.price(),
-				dto.quantity()
-		);
+		optimizeLoop(() -> {
+			Account account = accountRepository.getById(dto.accountId());
+			account.processOrder(
+					dto.type(),
+					dto.price(),
+					dto.quantity()
+			);
+			accountRepository.save(account);
+			return account.getId();
+		});
 	}
 
 	public Long reserve(final BeforeTradeAccountDto dto) {

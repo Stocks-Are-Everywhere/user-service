@@ -23,7 +23,6 @@ public class HoldingsService {
 		holdingsRepository.save(holdings);
 	}
 
-	@Transactional
 	public void reserve(final BeforeTradeHoldingsDto dto) {
 		optimizeLoop(() -> {
 			if (dto.type().isSell()) {
