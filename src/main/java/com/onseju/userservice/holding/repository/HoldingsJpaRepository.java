@@ -6,5 +6,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface HoldingsJpaRepository extends JpaRepository<Holdings, Long> {
+
+//	@Lock(LockModeType.OPTIMISTIC)
+//	@Transactional
 	Optional<Holdings> findByAccountIdAndCompanyCode(final Long accountId, final String companyCode);
 }
