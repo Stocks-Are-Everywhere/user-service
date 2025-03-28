@@ -1,9 +1,4 @@
 package com.onseju.userservice.order;
-import static com.onseju.userservice.account.domain.Type.*;
-
-import java.math.BigDecimal;
-
-import net.devh.boot.grpc.server.service.GrpcService;
 
 import com.onseju.userservice.account.domain.Type;
 import com.onseju.userservice.account.exception.InsufficientBalanceException;
@@ -19,6 +14,12 @@ import com.onseju.userservice.holding.service.HoldingsService;
 
 import io.grpc.stub.StreamObserver;
 import lombok.AllArgsConstructor;
+import net.devh.boot.grpc.server.service.GrpcService;
+
+import java.math.BigDecimal;
+
+import static com.onseju.userservice.account.domain.Type.BUY;
+import static com.onseju.userservice.account.domain.Type.SELL;
 
 
 @GrpcService
