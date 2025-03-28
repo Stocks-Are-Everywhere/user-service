@@ -3,6 +3,7 @@ package com.onseju.userservice.holding.mapper;
 import org.springframework.stereotype.Component;
 
 import com.onseju.userservice.account.domain.Type;
+import com.onseju.userservice.events.MatchedEvent;
 import com.onseju.userservice.order.BeforeTradeOrderDto;
 import com.onseju.userservice.events.UpdateEvent;
 import com.onseju.userservice.holding.service.dto.AfterTradeHoldingsDto;
@@ -12,7 +13,7 @@ import com.onseju.userservice.holding.service.dto.BeforeTradeHoldingsDto;
 public class HoldingsMapper {
 
 	public AfterTradeHoldingsDto toAfterTradeHoldingsDto(
-			final UpdateEvent event,
+			final MatchedEvent event,
 			final Long accountId,
 			final Type type
 	) {

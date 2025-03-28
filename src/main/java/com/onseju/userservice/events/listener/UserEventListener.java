@@ -7,6 +7,7 @@ import com.onseju.userservice.account.domain.Type;
 import com.onseju.userservice.account.mapper.AccountMapper;
 import com.onseju.userservice.account.service.AccountService;
 import com.onseju.userservice.account.service.dto.AfterTradeAccountDto;
+import com.onseju.userservice.events.MatchedEvent;
 import com.onseju.userservice.events.UpdateEvent;
 import com.onseju.userservice.global.config.RabbitMQConfig;
 import com.onseju.userservice.holding.mapper.HoldingsMapper;
@@ -34,7 +35,7 @@ public class UserEventListener {
 	 * 주문 매칭 이벤트 처리
 	 */
 	@RabbitListener(queues = RabbitMQConfig.USER_UPDATE_QUEUE)
-	public void handleOrderMatched(final UpdateEvent event) {
+	public void handleOrderMatched(final MatchedEvent event) {
 		// 계좌 잔액 업데이트
 		final AfterTradeAccountDto buyAccountParams =
 				accountMapper.toAfterTradeAccountDto(event, event.buyAccountId(), Type.BUY);
