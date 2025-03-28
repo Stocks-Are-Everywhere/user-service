@@ -1,13 +1,8 @@
 package com.onseju.userservice.account.domain;
 
-import static jakarta.persistence.FetchType.*;
-
-import java.math.BigDecimal;
-
 import com.onseju.userservice.account.exception.InsufficientBalanceException;
 import com.onseju.userservice.global.entity.BaseEntity;
 import com.onseju.userservice.member.domain.Member;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -15,12 +10,17 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.Version;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
+
+import java.math.BigDecimal;
+
+import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
 @Getter
@@ -44,6 +44,9 @@ public class Account extends BaseEntity {
 	@OneToOne(fetch = LAZY)
 	@JoinColumn(name = "member_id", nullable = false)
 	private Member member;
+
+	@Version
+	private Long version;
 
 	public Account(final Member member) {
 		this.member = member;

@@ -1,14 +1,9 @@
 package com.onseju.userservice.holding.domain;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.time.LocalDateTime;
-
 import com.onseju.userservice.account.domain.Type;
 import com.onseju.userservice.global.entity.BaseEntity;
 import com.onseju.userservice.holding.exception.HoldingsNotFoundException;
 import com.onseju.userservice.holding.exception.InsufficientHoldingsException;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -16,11 +11,16 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
+import jakarta.persistence.Version;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -59,6 +59,9 @@ public class Holdings extends BaseEntity {
 
 	@Column(nullable = false)
 	private Long accountId;
+
+	@Version
+	private Long version;
 
 	public void validateEnoughHoldings(final BigDecimal checkQuantity) {
 		if (getAvailableQuantity().compareTo(checkQuantity) < 0) {

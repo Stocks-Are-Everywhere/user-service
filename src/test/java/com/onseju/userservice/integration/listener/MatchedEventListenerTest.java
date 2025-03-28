@@ -1,4 +1,4 @@
-package com.onseju.userservice.listener;
+package com.onseju.userservice.integration.listener;
 
 import com.onseju.userservice.account.domain.Account;
 import com.onseju.userservice.account.mapper.AccountMapper;

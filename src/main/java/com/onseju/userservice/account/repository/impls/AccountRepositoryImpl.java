@@ -1,13 +1,11 @@
 package com.onseju.userservice.account.repository.impls;
 
-import org.springframework.stereotype.Repository;
-
 import com.onseju.userservice.account.domain.Account;
 import com.onseju.userservice.account.exception.AccountNotFoundException;
 import com.onseju.userservice.account.repository.AccountJpaRepository;
 import com.onseju.userservice.account.service.repository.AccountRepository;
-
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
 
 @Repository
 @RequiredArgsConstructor
