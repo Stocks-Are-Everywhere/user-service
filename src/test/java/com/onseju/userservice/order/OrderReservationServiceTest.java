@@ -10,6 +10,7 @@ import com.onseju.userservice.grpc.GrpcValidateResponse;
 import com.onseju.userservice.holding.mapper.HoldingsMapper;
 import com.onseju.userservice.holding.service.HoldingsService;
 import com.onseju.userservice.holding.service.dto.BeforeTradeHoldingsDto;
+import com.onseju.userservice.order.dto.BeforeTradeOrderDto;
 import io.grpc.stub.StreamObserver;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

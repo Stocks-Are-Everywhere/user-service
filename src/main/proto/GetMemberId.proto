@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.onseju.userservice.grpc";
+option java_outer_classname = "MemberProto";
+
+service MemberReaderService {
+  rpc  ReadMember (GrpcReadMemberRequest) returns (GrpcReadMemberResponse);
+}
+
+message GrpcReadMemberRequest {
+  int64 accountId = 1;
+}
+
+message GrpcReadMemberResponse {
+  int64 memberId = 1;
+}

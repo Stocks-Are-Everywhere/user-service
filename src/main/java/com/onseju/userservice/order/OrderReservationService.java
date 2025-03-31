@@ -12,6 +12,7 @@ import com.onseju.userservice.holding.exception.InsufficientHoldingsException;
 import com.onseju.userservice.holding.mapper.HoldingsMapper;
 import com.onseju.userservice.holding.service.HoldingsService;
 
+import com.onseju.userservice.order.dto.BeforeTradeOrderDto;
 import io.grpc.stub.StreamObserver;
 import lombok.AllArgsConstructor;
 import net.devh.boot.grpc.server.service.GrpcService;

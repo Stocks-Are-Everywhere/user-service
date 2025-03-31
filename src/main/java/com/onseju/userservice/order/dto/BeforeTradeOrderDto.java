@@ -1,9 +1,9 @@
-package com.onseju.userservice.order;
+package com.onseju.userservice.order.dto;
 
-
-import java.math.BigDecimal;
 
 import lombok.Builder;
+
+import java.math.BigDecimal;
 
 @Builder
 public record BeforeTradeOrderDto(

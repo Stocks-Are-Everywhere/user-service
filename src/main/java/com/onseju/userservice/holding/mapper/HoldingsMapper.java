@@ -4,8 +4,7 @@ import org.springframework.stereotype.Component;
 
 import com.onseju.userservice.account.domain.Type;
 import com.onseju.userservice.events.MatchedEvent;
-import com.onseju.userservice.order.BeforeTradeOrderDto;
-import com.onseju.userservice.events.UpdateEvent;
+import com.onseju.userservice.order.dto.BeforeTradeOrderDto;
 import com.onseju.userservice.holding.service.dto.AfterTradeHoldingsDto;
 import com.onseju.userservice.holding.service.dto.BeforeTradeHoldingsDto;
 
