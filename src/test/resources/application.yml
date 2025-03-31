@@ -37,3 +37,7 @@ google:
 chrome:
   extension:
     id: "TEST_CHROME_EXTENSION_ID"
+
+grpc:
+  server:
+    port: 9091
