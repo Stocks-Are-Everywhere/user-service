@@ -25,4 +25,4 @@ EXPOSE 8080
 EXPOSE 9090
 
 # 애플리케이션 실행 (쉘 스크립트를 사용하여 환경 변수 확장)
-ENTRYPOINT ["java", "$JAVA_OPTS", "-jar", "app.jar"]
+ENTRYPOINT java $JAVA_OPTS -jar app.jar
