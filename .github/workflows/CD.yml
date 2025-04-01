@@ -8,33 +8,31 @@ on:
       - main
   workflow_dispatch:
 
-
 jobs:
   deploy:
-    # CI 워크플로우가 성공한 경우에만 실행
     if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-      
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
-      
+
       - name: Login to DockerHub
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
         with:
           context: .
           push: true
           tags: platypus3036/user-service:latest
-      
+
       - name: Deploy to EC2 instance
         uses: appleboy/ssh-action@master
         with:
@@ -42,24 +40,49 @@ jobs:
           username: ubuntu
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            # 프로젝트 디렉토리로 이동
             cd ~/user-service
             
-            # 기존 .env 파일 삭제 (항상 새로 생성)
-            rm -f .env
+            cat > .env << EOF
+            DB_USERNAME=root
+            DB_PASSWORD=${{ secrets.DB_ROOT_PASSWORD }}
+            DB_HOST=user-db
+            DB_PORT=3306
+            DB_NAME=${{ secrets.DB_NAME }}
+            DB_URL=jdbc:mysql://user-db:3306/${{ secrets.DB_NAME }}?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+            DB_ROOT_PASSWORD=${{ secrets.DB_ROOT_PASSWORD }}
+            PORT=8080
+            JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}
+            GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
+            GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}
+            GOOGLE_REDIRECT_URI=${{ secrets.GOOGLE_REDIRECT_URI }}
+            GOOGLE_TOKEN_URI=${{ secrets.GOOGLE_TOKEN_URI }}
+            GOOGLE_USER_INFO=${{ secrets.GOOGLE_USER_INFO }}
+            CHROME_EXTENSION_ID=${{ secrets.CHROME_EXTENSION_ID }}
+            RABBITMQ_HOST=${{ secrets.RABBITMQ_HOST }}
+            RABBITMQ_PORT=${{ secrets.RABBITMQ_PORT }}
+            RABBITMQ_USERNAME=${{ secrets.RABBITMQ_USERNAME }}
+            RABBITMQ_PASSWORD=${{ secrets.RABBITMQ_PASSWORD }}
+            EOF
             
-            # .env 파일 생성 - DB_USERNAME을 root로 고정
-            cat > .env  docker-compose.yml << 'EOF'
+            chmod 600 .env
+            
+            echo "Checking if .env file exists"
+            ls -la .env
+            echo "Checking .env file content (민감 정보 제외)"
+            grep -v "PASSWORD\|SECRET\|KEY" .env
+            
+            docker pull platypus3036/user-service:latest
+            
+            cat > docker-compose.yml << EOF
             version: '3.8'
-
             services:
               user-db:
                 image: mysql:8.0
                 container_name: user-db
                 restart: unless-stopped
                 environment:
-                  MYSQL_DATABASE: ${DB_NAME}
-                  MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+                  MYSQL_DATABASE: "\${DB_NAME}"
+                  MYSQL_ROOT_PASSWORD: "\${DB_ROOT_PASSWORD}"
                   MYSQL_ROOT_HOST: "%"
                 volumes:
                   - user-db-data:/var/lib/mysql
@@ -73,7 +96,6 @@ jobs:
                 ports:
                   - "3306:3306"
                 command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --default-authentication-plugin=mysql_native_password --bind-address=0.0.0.0
-
               user-service:
                 image: platypus3036/user-service:latest
                 container_name: user-service
@@ -81,21 +103,20 @@ jobs:
                 depends_on:
                   - user-db
                 environment:
-                  SPRING_DATASOURCE_URL: ${DB_URL}
-                  SPRING_DATASOURCE_USERNAME: root
-                  SPRING_DATASOURCE_PASSWORD: ${DB_ROOT_PASSWORD}
-                  RABBITMQ_HOST: ${RABBITMQ_HOST}
-                  RABBITMQ_PORT: ${RABBITMQ_PORT}
-                  RABBITMQ_USERNAME: ${RABBITMQ_USERNAME}
-                  RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD}
-                  JWT_SECRET_KEY: ${JWT_SECRET_KEY}
-                  GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
-                  GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
-                  GOOGLE_REDIRECT_URI: ${GOOGLE_REDIRECT_URI}
-                  GOOGLE_TOKEN_URI: ${GOOGLE_TOKEN_URI}
-                  GOOGLE_USER_INFO: ${GOOGLE_USER_INFO}
-                  CHROME_EXTENSION_ID: ${CHROME_EXTENSION_ID}
-                  JAVA_OPTS: "-XX:+UseContainerSupport -XX:MaxRAMPercentage=70 -XX:MinRAMPercentage=50 -XX:InitialRAMPercentage=50"
+                  SPRING_DATASOURCE_URL: "\${DB_URL}"
+                  SPRING_DATASOURCE_USERNAME: "\${DB_USERNAME}"
+                  SPRING_DATASOURCE_PASSWORD: "\${DB_PASSWORD}"
+                  RABBITMQ_HOST: "\${RABBITMQ_HOST}"
+                  RABBITMQ_PORT: "\${RABBITMQ_PORT}"
+                  RABBITMQ_USERNAME: "\${RABBITMQ_USERNAME}"
+                  RABBITMQ_PASSWORD: "\${RABBITMQ_PASSWORD}"
+                  JWT_SECRET_KEY: "\${JWT_SECRET_KEY}"
+                  GOOGLE_CLIENT_ID: "\${GOOGLE_CLIENT_ID}"
+                  GOOGLE_CLIENT_SECRET: "\${GOOGLE_CLIENT_SECRET}"
+                  GOOGLE_REDIRECT_URI: "\${GOOGLE_REDIRECT_URI}"
+                  GOOGLE_TOKEN_URI: "\${GOOGLE_TOKEN_URI}"
+                  GOOGLE_USER_INFO: "\${GOOGLE_USER_INFO}"
+                  CHROME_EXTENSION_ID: "\${CHROME_EXTENSION_ID}"
                 deploy:
                   resources:
                     limits:
@@ -106,17 +127,28 @@ jobs:
                 ports:
                   - "8080:8080"
                   - "9090:9090"
-
             volumes:
               user-db-data:
                 driver: local
             EOF
             
-            # 서비스 중지 후 볼륨 유지하며 재시작
-            docker-compose down
+            echo "Checking docker-compose configuration"
+            docker-compose config
+            
+            docker-compose down --volumes
             docker-compose up -d
             
-            # 컨테이너 상태 확인
+            echo "Checking container status"
             docker ps
             
-          
+            echo "Waiting for MySQL to start..."
+            sleep 30
+            
+            echo "Granting privileges to root user"
+            docker exec user-db mysql -uroot -p"\${DB_ROOT_PASSWORD}" -e "GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' WITH GRANT OPTION; FLUSH PRIVILEGES;"
+            
+            echo "Restarting user-service container"
+            docker-compose restart user-service
+            
+            echo "Final container status"
+            docker ps
