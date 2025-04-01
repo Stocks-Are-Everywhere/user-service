@@ -50,7 +50,10 @@ google:
     uri: ${GOOGLE_TOKEN_URI}
   userinfo:
     uri: ${GOOGLE_USER_INFO}
-    
+
+chrome:
+  extension:
+    id: ${CHROME_EXTENSION_ID}
     
 grpc:
   server:
