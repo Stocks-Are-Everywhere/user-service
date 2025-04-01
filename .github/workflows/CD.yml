@@ -45,38 +45,11 @@ jobs:
             # 프로젝트 디렉토리로 이동
             cd ~/user-service
             
-            # .env 파일 생성
-            cat > .env << EOF
-            DB_USERNAME=${{ secrets.DB_USERNAME }}
-            DB_PASSWORD=${{ secrets.DB_PASSWORD }}
-            DB_HOST=${{ secrets.DB_HOST }}
-            DB_PORT=${{ secrets.DB_PORT }}
-            DB_NAME=${{ secrets.DB_NAME }}
-            DB_URL=jdbc:mysql://${{ secrets.DB_HOST }}:${{ secrets.DB_PORT }}/${{ secrets.DB_NAME }}?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
-            DB_ROOT_PASSWORD=${{ secrets.DB_PASSWORD }}
-            PORT=${{ secrets.PORT }}
-            JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}
-            GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
-            GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}
-            GOOGLE_REDIRECT_URI=${{ secrets.GOOGLE_REDIRECT_URI }}
-            GOOGLE_TOKEN_URI=${{ secrets.GOOGLE_TOKEN_URI }}
-            GOOGLE_USER_INFO=${{ secrets.GOOGLE_USER_INFO }}
-            CHROME_EXTENSION_ID=${{ secrets.CHROME_EXTENSION_ID }}
-            RABBITMQ_HOST=${{ secrets.RABBITMQ_HOST }}
-            RABBITMQ_PORT=${{ secrets.RABBITMQ_PORT }}
-            RABBITMQ_USERNAME=${{ secrets.RABBITMQ_USERNAME }}
-            RABBITMQ_PASSWORD=${{ secrets.RABBITMQ_PASSWORD }}
-            EOF
+            # 기존 .env 파일 삭제 (항상 새로 생성)
+            rm -f .env
             
-            # .env 파일 권한 설정
-            chmod 600 .env
-            
-            # 최신 이미지 풀
-            docker pull platypus3036/user-service:latest
-            
-            # docker-compose.yml이 없으면 생성
-            if [ ! -f docker-compose.yml ]; then
-              cat > docker-compose.yml << 'EOF'
+            # .env 파일 생성 - DB_USERNAME을 root로 고정
+            cat > .env  docker-compose.yml << 'EOF'
             version: '3.8'
 
             services:
@@ -86,9 +59,8 @@ jobs:
                 restart: unless-stopped
                 environment:
                   MYSQL_DATABASE: ${DB_NAME}
-                  MYSQL_USER: ${DB_USERNAME}
-                  MYSQL_PASSWORD: ${DB_PASSWORD}
                   MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+                  MYSQL_ROOT_HOST: "%"
                 volumes:
                   - user-db-data:/var/lib/mysql
                 deploy:
@@ -100,7 +72,7 @@ jobs:
                       memory: 1G
                 ports:
                   - "3306:3306"
-                command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --default-authentication-plugin=mysql_native_password
+                command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --default-authentication-plugin=mysql_native_password --bind-address=0.0.0.0
 
               user-service:
                 image: platypus3036/user-service:latest
@@ -139,7 +111,12 @@ jobs:
               user-db-data:
                 driver: local
             EOF
-            fi
             
-            # 서비스 시작 또는 재시작
+            # 서비스 중지 후 볼륨 유지하며 재시작
+            docker-compose down
             docker-compose up -d
+            
+            # 컨테이너 상태 확인
+            docker ps
+            
+          
